@@ -77,18 +77,18 @@ The `docker-compose.yml` file defines the Docker containers and their network co
 - **Custom Network Configuration**: The containers are configured to run on a custom Docker network, which allows them to have static IP addresses. This setup helps with networking between the Jenkins server and agent containers.
 ```yaml
 services:
-   jenkins-agent:
-   image: jenkins-agent-image:latest
-   container_name: jenkins-agent
-   ports:
-      - "22:22" 
-   volumes:
+  jenkins-agent:
+    image: jenkins-agent-image:latest
+    container_name: jenkins-agent
+    ports:
+      - "22:22"
+    volumes:
       - agent_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
-   restart: unless-stopped
-   networks:
+    restart: unless-stopped
+    networks:
       jenkins-network:
-         ipv4_address: 172.21.0.3
+        ipv4_address: 172.21.0.3
 
 networks:
   jenkins-network:
