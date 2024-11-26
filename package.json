@@ -1,0 +1,12 @@
+{
+  "name": "jenkins-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "stack:up": "docker-compose -p jenkins-application -f docker-compose.yaml up -d",
+    "stack:down": "docker-compose -p jenkins-application -f docker-compose.yaml down"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
