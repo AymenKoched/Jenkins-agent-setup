@@ -1,6 +1,19 @@
-# Jenkins Agent Docker Setup
+# Jenkins Agent Setup
 
 This repository contains scripts and configuration files for setting up a Jenkins agent using Docker. It includes the necessary steps to build the Jenkins agent image, configure the Docker containers, and integrate the agent with a Jenkins server.
+
+## Prerequisites
+Before setting up the Jenkins agent using Docker, ensure the following prerequisites are met:
+
+1. **Docker**:  
+   Make sure Docker is installed on your machine. You can install Docker by following the official documentation for your operating system:
+    - [Install Docker on Linux](https://docs.docker.com/engine/install/)
+    - [Install Docker on macOS](https://docs.docker.com/desktop/install/mac-install/)
+    - [Install Docker on Windows](https://docs.docker.com/desktop/install/windows-install/)
+
+2. **Docker Compose**:  
+   Docker Compose is required to define and manage multi-container Docker applications. Install Docker Compose by following the official guide:
+    - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 ## 1. Package.json Scripts
 
@@ -9,7 +22,7 @@ This repository contains scripts and configuration files for setting up a Jenkin
 To build the Jenkins agent image, use the following script:
 
 ```bash
-npm run build:jenkins-agent
+  docker build -t jenkins-agent-image:latest .
 ```
 
 ### Start the Docker Containers
@@ -17,7 +30,7 @@ npm run build:jenkins-agent
 To create and start the containers defined in the docker-compose.yml file, use the following script:
 
 ```bash
-  npm run stack:up
+  docker-compose -p jenkins-application -f docker-compose.yaml up -d
 ```
 
 ### Stop the Docker Containers
@@ -25,7 +38,7 @@ To create and start the containers defined in the docker-compose.yml file, use t
 To stop the containers, use the following script:
 
 ```bash
-  npm run stack:down
+  docker-compose -p jenkins-application -f docker-compose.yaml down
 ```
 
 ## 2. Jenkins Agent Dockerfile
@@ -139,14 +152,35 @@ To configure the Jenkins agent on the Jenkins server, follow these steps:
 
    This configuration will allow the Jenkins server to securely communicate with the Jenkins agent container using SSH.
 
+## Troubleshooting
 
+If, during your builds, the Jenkins agent interacts with Docker to pull or push images, you may encounter the following error:
 
+```error 
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: 
+Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/build?buildargs=%7B%22SERVICE%22%3A%22service-demo%22%7D&cachefrom=%5B%5D&cgroupparent=&cpuperiod=0&cpuquota=0&cpusetcpus=&cpusetmems=&cpushares=0&dockerfile=Dockerfile&labels=%7B%7D&memory=0&memswap=0&networkmode=default&rm=1&shmsize=0&t=aymenkoched02%2Fpipeline-demo%3Aservice-demo-23&target=&ulimits=null&version=1": 
+dial unix /var/run/docker.sock: connect: permission denied
+```
 
+This error occurs when the Jenkins agent doesn't have the required permissions to access Docker. To resolve this issue, follow these steps:
 
+1. Change the group of the `docker.sock` file to `docker`:
+   ```bash
+   chgrp docker /var/run/docker.sock
+   ```
 
+2. Add write permissions for the `docker` group:
+   ```bash
+   chmod 775 /var/run/docker.sock
+   ```
 
+3. Add the `jenkins` user to the `docker` group:
+   ```bash
+   usermod -aG docker jenkins
+   ```
+4. After running these commands, restart the Jenkins agent container to apply the changes.
 
-
+This will help you to fix the permission issues when interacting with Docker inside the Jenkins agent.
 
 
 
