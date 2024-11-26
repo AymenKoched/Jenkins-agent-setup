@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "stack:up": "docker-compose -p jenkins-application -f docker-compose.yaml up -d",
-    "stack:down": "docker-compose -p jenkins-application -f docker-compose.yaml down"
+    "stack:down": "docker-compose -p jenkins-application -f docker-compose.yaml down",
+    "build:jenkins-agent" : "docker build -t jenkins-agent-image:latest ."
   },
   "author": "",
   "license": "ISC",
